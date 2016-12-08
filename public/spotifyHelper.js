@@ -45,7 +45,6 @@ SpotifyHelper.prototype = {
       var img = document.createElement('img');
       var li = document.createElement('li');
       img.src = result.images[0].url
-      img.width = 250;
       li.innerText = result.name + " - " + result.artists[0].name;
       ul.appendChild(li);
       ul.appendChild(img);

@@ -1,6 +1,10 @@
 main{
-  width: 400px;
+  width: 600px;
   margin: 0 auto;
+}
+
+img{
+  width: 200px;
 }
 
 input{
@@ -15,7 +19,13 @@ input{
   padding: 5px;
 }
 
-#next {
+#next, li {
   padding: 5px;
   margin: 10px;
+}
+
+* {
+  font-family: system, -apple-system, BlinkMacSystemFont,
+        "Helvetica Neue", "Lucida Grande";
+
 }
