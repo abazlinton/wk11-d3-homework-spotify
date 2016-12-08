@@ -1,24 +1,34 @@
 var SpotifyHelper = function(query, type){
   this.query = query;
   this.type = type;
-  this.url = "https://api.spotify.com/v1/search?q=";
+  this.url = "https://api.spotify.com/v1/search?limit=5&q=";
   this.results = [];
   this.encodedUrl;
-  this.constructUrl();
+  this.initialise();
 };
 
 SpotifyHelper.prototype = {
 
-  getNextResults: function(){
+  // scopePreserver: function(holdThis) {
+  //   return this.getNextResults
+  // },
+
+  getNextResults: function(rightThis){
+
     var request = new XMLHttpRequest();
+
+    // if we triggered getNextResults from the button press line below won't work properly as 'this' is now button
     var currentHelper = this;
-    request.open("GET", this.encodedUrl);
+    if (this.correctScope !== undefined) {
+      currentHelper = this.correctScope;
+    };
+    request.open("GET", currentHelper.encodedUrl);
     request.onload = function(){
       if(this.status !== 200) return;
       var jsonString = this.responseText;
       var responseObject = JSON.parse(jsonString);
       // console.log(responseObject);
-      currentHelper.results = currentHelper.results.concat(responseObject.albums.items);
+      currentHelper.results = responseObject.albums.items;
       currentHelper.encodedUrl = responseObject.albums.next;
       currentHelper.updateDom();
     };
@@ -27,23 +37,47 @@ SpotifyHelper.prototype = {
   },
 
   updateDom: function() {
+    var ul = document.getElementById('albums')
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
+    };
     this.results.forEach( function(result){
-      var ul = document.getElementById('albums')
+      var img = document.createElement('img');
       var li = document.createElement('li');
+      img.src = result.images[0].url
+      img.width = 250;
       li.innerText = result.name;
       ul.appendChild(li);
+      ul.appendChild(img);
     });
     var body = document.querySelector('body');
-    nextButton = document.createElement('button');
-    nextButton.onclick = this.getNextResults;
-    nextButton.innerText = "Next";
-    body.appendChild(nextButton);
+      var nextButton = document.getElementById('next');
+    // var oldLIs = document.getElementsByTagName('li');
+    // nextButton.onclick = this.getNextResults;
+      nextButton.correctScope = this;
+    // nextButton.innerText = "Next";
+    // body.appendChild(nextButton);
   },
 
-  constructUrl: function(){
+  queryChanged: function(){
+    if (this.value.length > 0){
+      this.correctScope.encodedUrl = this.correctScope.url;
+      this.correctScope.encodedUrl += encodeURIComponent(this.value);
+      this.correctScope.encodedUrl += "&type=";
+      this.correctScope.encodedUrl += this.correctScope.type;
+      this.correctScope.getNextResults();
+    }
+  },
+
+  initialise: function(){
     this.encodedUrl = this.url;
     this.encodedUrl += encodeURIComponent(this.query);
     this.encodedUrl += "&type=";
     this.encodedUrl += this.type;
+    var nextButton = document.getElementById('next');
+    nextButton.onclick = this.getNextResults;
+    var queryBox = document.getElementById('search-query');
+    queryBox.onkeyup = this.queryChanged;
+    queryBox.correctScope = this;
   },
 };
