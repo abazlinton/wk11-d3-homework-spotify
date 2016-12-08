@@ -1,7 +1,7 @@
 var SpotifyHelper = function(query, type){
   this.query = query;
   this.type = type;
-  this.url = "https://api.spotify.com/v1/search?limit=5&q=";
+  this.url = "https://api.spotify.com/v1/search?limit=3&q=";
   this.results = [];
   this.encodedUrl;
   this.initialise();
@@ -46,7 +46,7 @@ SpotifyHelper.prototype = {
       var li = document.createElement('li');
       img.src = result.images[0].url
       img.width = 250;
-      li.innerText = result.name;
+      li.innerText = result.name + " - " + result.artists[0].name;
       ul.appendChild(li);
       ul.appendChild(img);
     });
