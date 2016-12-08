@@ -1,5 +1,5 @@
 var app = function(){
-  spotify = new SpotifyHelper("christmas", "album");
+  spotify = new SpotifyHelper("blur", "album");
   // SpotifyHelper.currentHelper = spotify;
   spotify.getNextResults();
 
